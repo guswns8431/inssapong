@@ -1,0 +1,34 @@
+<template>
+  <div>
+    <h1>{{ UserData.user_id }}</h1>
+    <NavBar></NavBar>
+    <div class="gameBox">
+      <b-card title="게임" class="gameCard">
+        <b-button size="lg" @click="goGameView()" variant="outline-primary"
+          >게임 찾으러 가기!</b-button
+        >
+      </b-card>
+    </div>
+  </div>
+</template>
+
+<script setup lang="ts">
+import router from "@/router";
+import NavBar from "@/components/mypage/NavBar.vue";
+import { UserData } from "@/store/UserData";
+
+function goGameView() {
+  router.push({ name: "game" });
+}
+</script>
+
+<style scoped>
+.gameBox {
+  display: flex;
+  justify-content: center;
+}
+
+.gameCard {
+  width: 50em;
+}
+</style>
