@@ -66,7 +66,7 @@ function getChannelName() {
       },
     })
     .then((res) => {
-      channel_name.value = res.data;
+      channel_name.value = res.data.name;
     })
     .catch((err) => {
       console.log(err);
