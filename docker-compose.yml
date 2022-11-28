@@ -1,0 +1,35 @@
+version: "3"
+
+services:
+  database:
+    image: postgres:latest
+    container_name: container_database
+    restart: always
+    ports:
+      - 5432:5432
+    env_file:
+      - .env
+    volumes:
+      - ./requirements/database/db_init.sql:/docker-entrypoint-initdb.d/db_init.sql
+
+  backend:
+    build: ./requirements/backend
+    container_name: container_backend
+    restart: always
+    ports:
+      - 3000:3000
+    volumes:
+      - ./requirements/backend/tools:/backend
+    depends_on:
+      - database
+
+  frontend:
+    build: ./requirements/frontend
+    container_name: container_frontend
+    restart: always
+    ports:
+      - 8080:8080
+    volumes:
+      - ./requirements/frontend/tools:/frontend
+    depends_on:
+      - backend
