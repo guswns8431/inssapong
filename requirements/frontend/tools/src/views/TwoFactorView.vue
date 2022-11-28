@@ -33,7 +33,7 @@ async function sendTwoFactor() {
     await UserData.instance.put(
       `/login/twofactor`,
       {
-        CertificationNumber: OauthNum.value,
+        certificationNumber: OauthNum.value,
       },
       {
         withCredentials: true,
