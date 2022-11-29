@@ -97,7 +97,7 @@ export class LoginController {
   @UseGuards(JwtSignupAuthGuard)
   @Get('/signup')
   async authEditProfile(@User() user: FtUserDto) {
-    this.logger.log(`GET /login/first`);
+    this.logger.log(`GET /login/signup`);
     if (user.isRegistered === true) {
       throw new ForbiddenException();
     }
