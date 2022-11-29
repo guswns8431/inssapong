@@ -20,6 +20,8 @@ import {
   ApiNotFoundResponse,
 } from '@nestjs/swagger';
 import { Response } from 'express';
+import { FtUserDto } from 'src/login/dto/login.dto';
+import { User } from 'src/login/user.decorator';
 import {
   ChanageFollowStatusDto,
   GameHistoryDto,
@@ -55,9 +57,9 @@ export class UsersController {
   })
   @Get()
   async findUser(@Query('id') id: string, @Res() res: Response) {
-      await this.usersService.checkUserExist(id);
-      this.logger.log(`${id} 유저 존재`);
-      res.status(200).send();
+    await this.usersService.checkUserExist(id);
+    this.logger.log(`${id} 유저 존재`);
+    res.status(200).send();
   }
 
   @ApiOperation({
@@ -76,19 +78,19 @@ export class UsersController {
   })
   @Get('/gameHistory')
   async getGameHistory(@Query('id') id: string, @Res() res: Response) {
-      await this.usersService.checkUserExist(id);
-      const gameHistoryDB = await this.usersRepository.getGameHistory(id);
-      const gameHistory: GameHistoryDto = { gameHistory: [] };
-      for (const element of gameHistoryDB) {
-        const oneGameHistory: OneGameHistoryDto = {
-          id: element['id'],
-          winner: element['winner_id'],
-          loser: element['loser_id'],
-        };
-        gameHistory.gameHistory.push(oneGameHistory);
-      }
-      this.logger.log(`${id}의 전적을 가져오는데 성공`);
-      res.status(200).send(gameHistory);
+    await this.usersService.checkUserExist(id);
+    const gameHistoryDB = await this.usersRepository.getGameHistory(id);
+    const gameHistory: GameHistoryDto = { gameHistory: [] };
+    for (const element of gameHistoryDB) {
+      const oneGameHistory: OneGameHistoryDto = {
+        id: element['id'],
+        winner: element['winner_id'],
+        loser: element['loser_id'],
+      };
+      gameHistory.gameHistory.push(oneGameHistory);
+    }
+    this.logger.log(`${id}의 전적을 가져오는데 성공`);
+    res.status(200).send(gameHistory);
   }
 
   @ApiOperation({
@@ -107,15 +109,15 @@ export class UsersController {
   })
   @Get('/gameStat')
   async getGameStat(@Query('id') id: string, @Res() res: Response) {
-      await this.usersService.checkUserExist(id);
-      const winHistoryDB = await this.usersRepository.getWinHistory(id);
-      const loseHistoryDB = await this.usersRepository.getLoseHistory(id);
-      const gameStat: GameStatDto = {
-        wins: winHistoryDB.length,
-        loses: loseHistoryDB.length,
-      };
-      this.logger.log(`${id}의 승패수를 가져오는데 성공`);
-      res.status(200).send(gameStat);
+    await this.usersService.checkUserExist(id);
+    const winHistoryDB = await this.usersRepository.getWinHistory(id);
+    const loseHistoryDB = await this.usersRepository.getLoseHistory(id);
+    const gameStat: GameStatDto = {
+      wins: winHistoryDB.length,
+      loses: loseHistoryDB.length,
+    };
+    this.logger.log(`${id}의 승패수를 가져오는데 성공`);
+    res.status(200).send(gameStat);
   }
 
   @ApiOperation({
@@ -135,24 +137,24 @@ export class UsersController {
   @Get('/:id')
   async getUserInfo(
     @Param('id') target_id: string,
-    @Req() req,
+    @User() user: FtUserDto,
     @Res() res: Response,
   ) {
-      await this.usersService.checkUserExist(target_id);
-      const userInfoDB = await this.usersRepository.getUserInfo(target_id);
-      if (userInfoDB[0][`avatar`] == null)
-        userInfoDB[0][`avatar`] = await this.usersService.getDefaultImage();
-      const userInfo: UserInfoDto = {
-        id: userInfoDB[0]['id'],
-        nickname: userInfoDB[0]['nickname'],
-        avatar: `${userInfoDB[0]['avatar']}`,
-        relation_status: await this.usersService.getRelationStatus(
-          req.user.id,
-          target_id,
-        ),
-      };
-      this.logger.log(`${target_id}의 유저 정보를 가져오는데 성공`);
-      res.status(200).send(userInfo);
+    await this.usersService.checkUserExist(target_id);
+    const userInfoDB = await this.usersRepository.getUserInfo(target_id);
+    if (userInfoDB[0][`avatar`] == null)
+      userInfoDB[0][`avatar`] = await this.usersService.getDefaultImage();
+    const userInfo: UserInfoDto = {
+      id: userInfoDB[0]['id'],
+      nickname: userInfoDB[0]['nickname'],
+      avatar: `${userInfoDB[0]['avatar']}`,
+      relation_status: await this.usersService.getRelationStatus(
+        user.id,
+        target_id,
+      ),
+    };
+    this.logger.log(`${target_id}의 유저 정보를 가져오는데 성공`);
+    res.status(200).send(userInfo);
   }
 
   @ApiOperation({
@@ -180,26 +182,25 @@ export class UsersController {
   @Patch('follow')
   async changeFollowStatus(
     @Body() body: ChanageFollowStatusDto,
-    @Req() req,
+    @User() user: FtUserDto,
     @Res() res: Response,
   ) {
-      await this.usersService.checkUserExist(req.user.id);
-      await this.usersService.checkUserExist(body.partner_id);
-      if (req.user.id == body.partner_id) {
-		this.logger.error(`[${this.changeFollowStatus.name}] ${BadRequestException.name} 자기 자신을 follow 할 수 없음`)
-		throw new BadRequestException('자기 자신을 follow 할 수 없음');
-	  }
-      if (body.follow_status == false) {
-        await this.usersRepository.offFollowStatus(
-          req.user.id,
-          body.partner_id,
-        );
-        this.logger.log(`${req.user.id}가 ${body.partner_id}를 unfollow`);
-      } else if (body.follow_status == true) {
-        await this.usersService.onFollowStatus(req.user.id, body.partner_id);
-        this.logger.log(`${req.user.id}가 ${body.partner_id}를 follow`);
-      }
-      res.status(200).send();
+    await this.usersService.checkUserExist(user.id);
+    await this.usersService.checkUserExist(body.partner_id);
+    if (user.id == body.partner_id) {
+      this.logger.error(
+        `[${this.changeFollowStatus.name}] ${BadRequestException.name} 자기 자신을 follow 할 수 없음`,
+      );
+      throw new BadRequestException('자기 자신을 follow 할 수 없음');
+    }
+    if (body.follow_status == false) {
+      await this.usersRepository.offFollowStatus(user.id, body.partner_id);
+      this.logger.log(`${user.id}가 ${body.partner_id}를 unfollow`);
+    } else if (body.follow_status == true) {
+      await this.usersService.onFollowStatus(user.id, body.partner_id);
+      this.logger.log(`${user.id}가 ${body.partner_id}를 follow`);
+    }
+    res.status(200).send();
   }
 
   @ApiOperation({
@@ -219,18 +220,22 @@ export class UsersController {
     description: '서버 에러',
   })
   @Patch('block')
-  async blockUser(@Query('id') blockId, @Req() req, @Res() res: Response) {
-      await this.usersService.checkUserExist(req.user.id);
-      await this.usersService.checkUserExist(blockId);
-      const relation_status = await this.usersRepository.getRelationStatus(
-        req.user.id,
-        blockId,
-      );
-      if (relation_status.length == 1)
-        await this.usersRepository.blockFollow(req.user.id, blockId);
-      else if (relation_status.length == 0)
-        await this.usersRepository.blockUnfollow(req.user.id, blockId);
-      this.logger.log(`${req.user.id}가 ${blockId}를 차단`);
-      res.status(200).send();
+  async blockUser(
+    @Query('id') blockId,
+    @User() user: FtUserDto,
+    @Res() res: Response,
+  ) {
+    await this.usersService.checkUserExist(user.id);
+    await this.usersService.checkUserExist(blockId);
+    const relation_status = await this.usersRepository.getRelationStatus(
+      user.id,
+      blockId,
+    );
+    if (relation_status.length == 1)
+      await this.usersRepository.blockFollow(user.id, blockId);
+    else if (relation_status.length == 0)
+      await this.usersRepository.blockUnfollow(user.id, blockId);
+    this.logger.log(`${user.id}가 ${blockId}를 차단`);
+    res.status(200).send();
   }
 }

@@ -28,6 +28,8 @@ import { UpdateMypageInfoDto } from './dto/update-mypage.dto';
 import { MypageRepository } from './mypage.repository';
 import { MypageService } from './mypage.service';
 import { Response } from 'express';
+import { User } from 'src/login/user.decorator';
+import { FtUserDto } from 'src/login/dto/login.dto';
 
 // 2-2
 @ApiTags('마이페이지 API')
@@ -52,22 +54,24 @@ export class MypageController {
     description: '서버 에러',
   })
   @Get()
-  async getUserInfo(@Req() req, @Res() res: Response) {
-      const userInfoDB = await this.mypageRepository.getUserInfo(req.user.id);
-      if (userInfoDB.length <= 0) {
-		this.logger.error(`[${this.getUserInfo.name}] ${req.user.id}: 존재하지 않는 유저`)
-		  throw new NotFoundException(`${req.user.id}: 존재하지 않는 유저`);
-	  }
-      if (userInfoDB[0][`avatar`] == null)
-        userInfoDB[0][`avatar`] = this.mypageService.getDefaultImage();
-      const userinfo: MypageInfoDto = {
-        id: userInfoDB[0]['id'],
-        nickname: userInfoDB[0]['nickname'],
-        avatar: `${userInfoDB[0]['avatar']}`,
-        twofactor_status: userInfoDB[0]['twofactor_status'],
-      };
-      this.logger.log(`${userinfo.id}의 정보를 가져오는데 성공`);
-      res.status(200).send(userinfo);
+  async getUserInfo(@User() user: FtUserDto, @Res() res: Response) {
+    const userInfoDB = await this.mypageRepository.getUserInfo(user.id);
+    if (userInfoDB.length <= 0) {
+      this.logger.error(
+        `[${this.getUserInfo.name}] ${user.id}: 존재하지 않는 유저`,
+      );
+      throw new NotFoundException(`${user.id}: 존재하지 않는 유저`);
+    }
+    if (userInfoDB[0][`avatar`] == null)
+      userInfoDB[0][`avatar`] = this.mypageService.getDefaultImage();
+    const userinfo: MypageInfoDto = {
+      id: userInfoDB[0]['id'],
+      nickname: userInfoDB[0]['nickname'],
+      avatar: `${userInfoDB[0]['avatar']}`,
+      twofactor_status: userInfoDB[0]['twofactor_status'],
+    };
+    this.logger.log(`${userinfo.id}의 정보를 가져오는데 성공`);
+    res.status(200).send(userinfo);
   }
 
   @ApiOperation({
@@ -90,13 +94,13 @@ export class MypageController {
   })
   @Patch()
   async patchUserInfo(
-    @Req() req,
+    @User() user: FtUserDto,
     @Body() body: UpdateMypageInfoDto,
     @Res() res: Response,
   ) {
-      await this.mypageService.updateMypageInfo(req.user.id, body);
-      this.logger.log(`${req.user.id}의 정보를 업데이트하는데 성공`);
-      res.status(200).send();
+    await this.mypageService.updateMypageInfo(user.id, body);
+    this.logger.log(`${user.id}의 정보를 업데이트하는데 성공`);
+    res.status(200).send();
   }
 
   @ApiOperation({
@@ -111,14 +115,14 @@ export class MypageController {
     description: '서버 에러',
   })
   @Get('/follows')
-  async getFollows(@Req() req, @Res() res: Response) {
-      const followsDB = await this.mypageRepository.getFollows(req.user.id);
-      const follows: FollowsDto = { follow: [] };
-      for (const element of followsDB) {
-        follows.follow.push(element['partner_id'] as string);
-      }
-      this.logger.log(`${req.user.id}의 follow를 가져오는데 성공`);
-      res.status(200).send(follows);
+  async getFollows(@User() user: FtUserDto, @Res() res: Response) {
+    const followsDB = await this.mypageRepository.getFollows(user.id);
+    const follows: FollowsDto = { follow: [] };
+    for (const element of followsDB) {
+      follows.follow.push(element['partner_id'] as string);
+    }
+    this.logger.log(`${user.id}의 follow를 가져오는데 성공`);
+    res.status(200).send(follows);
   }
 
   @ApiOperation({
@@ -133,23 +137,21 @@ export class MypageController {
     description: '서버 에러',
   })
   @Get('/gameHistory')
-  async getGameHistory(@Req() req, @Res() res: Response) {
-      const gameHistoryDB = await this.mypageRepository.getGameHistory(
-        req.user.id,
-      );
-      const gameHistory: GameHistoryDto = {
-        gameHistory: [],
+  async getGameHistory(@User() user: FtUserDto, @Res() res: Response) {
+    const gameHistoryDB = await this.mypageRepository.getGameHistory(user.id);
+    const gameHistory: GameHistoryDto = {
+      gameHistory: [],
+    };
+    for (const element of gameHistoryDB) {
+      const oneGameHistory: OneGameHistoryDto = {
+        id: element['id'],
+        winner: element['winner_id'],
+        loser: element['loser_id'],
       };
-      for (const element of gameHistoryDB) {
-        const oneGameHistory: OneGameHistoryDto = {
-          id: element['id'],
-          winner: element['winner_id'],
-          loser: element['loser_id'],
-        };
-        gameHistory.gameHistory.push(oneGameHistory);
-      }
-      this.logger.log(`${req.user.id}의 게임 전적을 가져오는데 성공`);
-      res.status(200).send(gameHistory);
+      gameHistory.gameHistory.push(oneGameHistory);
+    }
+    this.logger.log(`${user.id}의 게임 전적을 가져오는데 성공`);
+    res.status(200).send(gameHistory);
   }
 
   @ApiOperation({
@@ -164,18 +166,14 @@ export class MypageController {
     description: '서버 에러',
   })
   @Get('/gameStat')
-  async getGameStat(@Req() req, @Res() res: Response) {
-      const winHistoryDB = await this.mypageRepository.getWinHistory(
-        req.user.id,
-      );
-      const loseHistoryDB = await this.mypageRepository.getLoseHistory(
-        req.user.id,
-      );
-      const gameStat: GameStatDto = {
-        wins: winHistoryDB.length,
-        loses: loseHistoryDB.length,
-      };
-      this.logger.log(`${req.user.id}의 승패 수를 가져오는데 성공`);
-      res.status(200).send(gameStat);
+  async getGameStat(@User() user: FtUserDto, @Res() res: Response) {
+    const winHistoryDB = await this.mypageRepository.getWinHistory(user.id);
+    const loseHistoryDB = await this.mypageRepository.getLoseHistory(user.id);
+    const gameStat: GameStatDto = {
+      wins: winHistoryDB.length,
+      loses: loseHistoryDB.length,
+    };
+    this.logger.log(`${user.id}의 승패 수를 가져오는데 성공`);
+    res.status(200).send(gameStat);
   }
 }

@@ -1,6 +1,5 @@
 import { CacheInterceptor, CacheModule, Module } from '@nestjs/common';
 import { AppController } from './app.controller';
-import { AppService } from './app.service';
 import { MainSocketModule } from './sockets/main.module';
 import { LoginModule } from './login/login.module';
 import { MypageModule } from './mypage/mypage.module';
@@ -53,7 +52,6 @@ import { LoginRepository } from './login/login.repository';
   ],
   controllers: [AppController],
   providers: [
-    AppService,
     LoginRepository,
     {
       provide: APP_GUARD,
