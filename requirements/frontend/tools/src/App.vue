@@ -42,7 +42,7 @@ provide("setUnavailableRouter", setUnavailableRouter);
 
 function setCheckLoginAvailable() {
   checklogin_available.value = true;
-  router_available.value = true;
+  router_available.value = false;
 }
 provide("setCheckLoginAvailable", setCheckLoginAvailable);
 
