@@ -26,9 +26,7 @@ export class GameGateway {
       (user) => user.id == req.partner_id,
     );
     if (partner == undefined) {
-      this.logger.log(
-        `[gameInvite] : ${req.partner_id} 이런 일은 있을 수 없음.`,
-      );
+      this.logger.log(`[gameInvite] : ${req.partner_id}`);
       return;
     }
     if (partner.status != USER_STATUS.ONLINE) {
@@ -49,7 +47,7 @@ export class GameGateway {
   gameWatch(client: Socket, id: string) {
     const player = this.mainGateway.users.find((user) => user.id == id);
     if (player == undefined) {
-      this.logger.log(`[gameCatch] : ${id} 이런 일은 있을 수 없음.`);
+      this.logger.log(`[gameCatch] : ${id}`);
     }
     client.join(player.gameInfo.room_id);
     client.emit('game/getRoomId', player.gameInfo.room_id);
@@ -87,20 +85,24 @@ export class GameGateway {
   movePlayer(client: Socket, data: string) {
     const player = this.mainGateway.users.find((user) => user.socket == client);
     if (player == undefined) {
-      this.logger.log(`[movePlayer] : ${client.id} 이런 일은 있을 수 없음.`);
+      this.logger.log(`[movePlayer] : ${client.id}`);
+      return;
     }
     const gameRoom = this.gameRooms.find(
       (room) => room.room_id == player.gameInfo.room_id,
     );
     if (gameRoom == undefined) {
       this.logger.log(`[movePlayer] : ${player.gameInfo.room_id} error.`);
+      return;
     }
 
     let value = 1;
     if ('up' == data) {
-      value = -1;
+      if (player.gameInfo.reverse_key) value = -1;
+      else value = 1;
     } else if ('down' == data) {
-      value = 1;
+      if (player.gameInfo.reverse_key) value = 1;
+      else value = -1;
     }
     if (
       (gameRoom.p1_y > 0 || value == 1) &&
@@ -120,11 +122,29 @@ export class GameGateway {
     }
   }
 
+  @SubscribeMessage('game/reverse')
+  reverseKeyEvent(client: Socket, data: string) {
+    const player = this.mainGateway.users.find((user) => user.socket == client);
+    if (player == undefined) {
+      this.logger.log(`[movePlayer] : ${client.id}`);
+      return;
+    }
+    const gameRoom = this.gameRooms.find(
+      (room) => room.room_id == player.gameInfo.room_id,
+    );
+    if (gameRoom == undefined) {
+      this.logger.log(`[movePlayer] : ${player.gameInfo.room_id} error.`);
+      return;
+    }
+    this.logger.error(`${player.id}, ${gameRoom.room_id}`);
+    player.gameInfo.reverse_key = !player.gameInfo.reverse_key;
+  }
+
   @SubscribeMessage('game/giveUp')
   giveUpGame(client: Socket) {
     const player = this.mainGateway.users.find((user) => user.socket == client);
     if (player == undefined) {
-      this.logger.log(`[giveUpGame] : ${client.id} 이런 일은 있을 수 없음.`);
+      this.logger.log(`[giveUpGame] : ${client.id}`);
     }
     const gameRoom = this.gameRooms.find(
       (gameRoom) => gameRoom.room_id == player.gameInfo.room_id,
@@ -152,12 +172,16 @@ export class GameGateway {
 
     const player = this.mainGateway.users.find((user) => user.socket == client);
     if (player == undefined) {
-      this.logger.log(`[exit] : ${client.id} 이런 일은 있을 수 없음.`);
+      this.logger.log(`[exit] : ${client.id}`);
+      return;
     }
     const gameRoom = this.gameRooms.find(
       (room) => room.room_id == player.gameInfo.room_id,
     );
     if (gameRoom == undefined) {
+      this.gameRooms = this.gameRooms.filter(
+        (element) => element.room_id != room_id,
+      );
       client.leave(room_id);
       return;
     }
@@ -246,9 +270,7 @@ export class GameGateway {
       (user) => user.id == req.partner_id,
     );
     if (player == undefined) {
-      this.logger.log(
-        `[checkInvitePlayers] : ${req.user_id} 이런 일은 있을 수 없음.`,
-      );
+      this.logger.log(`[checkInvitePlayers] : ${req.user_id}`);
       return;
     }
     if (player.status != USER_STATUS.ONLINE) {
@@ -256,9 +278,7 @@ export class GameGateway {
       return;
     }
     if (partner == undefined) {
-      this.logger.log(
-        `[checkInvitePlayers] : ${req.partner_id} 이런 일은 있을 수 없음.`,
-      );
+      this.logger.log(`[checkInvitePlayers] : ${req.partner_id}`);
       return;
     }
     if (partner.status != USER_STATUS.ONLINE) {
@@ -279,5 +299,11 @@ export class GameGateway {
       return;
     }
     this.startGame(player, partner);
+  }
+
+  printAllGameRoos() {
+    this.gameRooms.forEach((element) => {
+      this.logger.log(`${element.p1_id}, ${element.p2_id}, ${element.room_id}`);
+    });
   }
 }

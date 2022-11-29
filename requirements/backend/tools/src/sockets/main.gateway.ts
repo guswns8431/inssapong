@@ -34,9 +34,7 @@ export class MainGateway {
     const user_id = client.handshake.query.user_id;
     const user = this.users.find((element) => element.id == user_id);
     if (user == undefined) {
-      this.logger.log(
-        `[connect] ${user_id} : 여기 들어오면 안돼!! 이젠 절대 있을 수 없는 일임.`,
-      );
+      this.logger.log(`[connect] ${user_id}`);
       this.initUsers();
       return;
     }
@@ -50,9 +48,7 @@ export class MainGateway {
   getUserStatus(client: Socket, id: string) {
     const user = this.users.find((user) => user.id == id);
     if (user == undefined) {
-      this.logger.log(
-        `[getUserStatus] ${id} : 여기 들어오면 안돼!! 이젠 절대 있을 수 없는 일임.`,
-      );
+      this.logger.log(`[getUserStatus] ${id}`);
       this.initUsers();
       return;
     }
@@ -68,9 +64,7 @@ export class MainGateway {
   userDisconnect(client: Socket) {
     const user = this.users.find((element) => element.socket == client);
     if (user == undefined) {
-      this.logger.log(
-        `[disconnect] 여기 들어오면 안돼!! 그치만 발생할 수도 있는 일임.`,
-      );
+      this.logger.log(`[disconnect]`);
       this.initUsers();
       return;
     }

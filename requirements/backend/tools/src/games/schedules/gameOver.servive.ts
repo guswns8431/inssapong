@@ -14,12 +14,14 @@ export default async function gameOver(
   const p1 = gameGateway.mainGateway.users.find((user) => user.id == p1_id);
   if (p1 != undefined) {
     p1.gameInfo.reset();
+    p1.socket.leave(gameRoom.room_id);
     p1.setStatusOnline();
     gameGateway.mainGateway.server.emit(`getUserStatus_${p1.id}`, p1.status);
   }
   const p2 = gameGateway.mainGateway.users.find((user) => user.id == p2_id);
   if (p2 != undefined) {
     p2.gameInfo.reset();
+    p2.socket.leave(gameRoom.room_id);
     p2.setStatusOnline();
     gameGateway.mainGateway.server.emit(`getUserStatus_${p2.id}`, p2.status);
   }

@@ -2,8 +2,8 @@ export const GAME_OBJECT = {
   CANVAS_WIDTH: 300,
   CANVAS_HEIGHT: 150,
   BALL_RADIUS: 3,
-  BAR_WIDTH: 5,
-  BAR_HEIGHT: 20,
+  BAR_WIDTH: 2,
+  BAR_HEIGHT: 10,
   MOVE_PIXEL: 5,
   MARGIN: 20,
   DRAW_UPDATE_TIME: 50,
@@ -17,11 +17,13 @@ export class GameComponent {
   }
   p1_id: string;
   p2_id: string;
+  reverse_key: boolean;
   room_id: string;
 
   init(p1_id: string, p2_id: string, room_id: string) {
     this.p1_id = p1_id;
     this.p2_id = p2_id;
+    this.reverse_key = false;
     this.room_id = room_id;
   }
   reset() {
