@@ -1,4 +1,10 @@
-import { Controller, Get, Header, Logger, Req, Res } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Header,
+  Res,
+  UnauthorizedException,
+} from '@nestjs/common';
 import { AppRepository } from './app.repository';
 import { FtUserDto } from './login/dto/login.dto';
 import { User } from './login/user.decorator';
@@ -15,6 +21,7 @@ export class AppController {
     const isUserExist = await this.appRepository.isUserExist(user.id);
     if (isUserExist === false) {
       res.cookie('Authorization', '');
+      throw new UnauthorizedException();
     }
     res.status(200).send(user.id);
     return;

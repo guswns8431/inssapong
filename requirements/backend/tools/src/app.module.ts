@@ -12,7 +12,7 @@ import { JwtAuthGuard } from './login/jwt/jwt-auth.guard';
 import { APP_GUARD, APP_INTERCEPTOR } from '@nestjs/core';
 import { DatabaseModule } from './database/database.module';
 import configuration from 'config/configuration';
-import { LoginRepository } from './login/login.repository';
+import { AppRepository } from './app.repository';
 
 @Module({
   imports: [
@@ -52,7 +52,7 @@ import { LoginRepository } from './login/login.repository';
   ],
   controllers: [AppController],
   providers: [
-    LoginRepository,
+    AppRepository,
     {
       provide: APP_GUARD,
       useClass: JwtAuthGuard,
