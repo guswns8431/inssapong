@@ -34,6 +34,7 @@ async function checkTwoFactor() {
   try {
     await instance.get("/login/twofactor");
   } catch (err) {
+    cookies.keys().forEach((cookie) => cookies.remove(cookie));
     console.log("Error : CheckTwoFactor.vue checkFristLogin() 함수 " + err);
     router.push({ name: "start" });
   }
