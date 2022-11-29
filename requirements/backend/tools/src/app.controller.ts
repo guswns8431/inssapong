@@ -10,6 +10,10 @@ export class AppController {
   @Get('/loginCheck')
   loginCheckGet(@Req() req, @Res() res) {
     const user_id = req.user.id;
+    // id가 db에 존재하나요?
+    // - 존재하지 않는다면 jwt isRegisterd? = false
+    // - 존재하면 ok
+
     res.status(200).send(user_id);
     return;
   }
