@@ -5,5 +5,15 @@ module.exports = defineConfig({
   configureWebpack: {
     devtool: false,
   },
+  devServer: {
+    client: {
+      webSocketURL: {
+        hostname: "localhost",
+        pathname: "/ws",
+        port: 8080,
+        protocol: "ws",
+      },
+    },
+  },
   productionSourceMap: false,
 });
