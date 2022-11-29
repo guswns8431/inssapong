@@ -32,15 +32,11 @@ export class JwtTwoFactorAuthGuard extends AuthGuard('jwt') {
       throw new UnauthorizedException();
     }
 
-    if (user.isAuthenticated === true) {
-      throw new ForbiddenException();
-    }
-
-    if (user.isRegistered === true && user.twoFactorStatus === false) {
-      throw new ForbiddenException();
-    }
-
-    if (user.isRegistered === false) {
+    if (
+      user.isAuthenticated === true ||
+      (user.isRegistered === true && user.twoFactorStatus === false) ||
+      user.isRegistered === false
+    ) {
       throw new ForbiddenException();
     }
 

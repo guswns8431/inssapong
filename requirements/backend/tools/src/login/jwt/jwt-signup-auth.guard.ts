@@ -32,11 +32,7 @@ export class JwtSignupAuthGuard extends AuthGuard('jwt') {
       throw new UnauthorizedException();
     }
 
-    if (user.isAuthenticated === true) {
-      throw new ForbiddenException();
-    }
-
-    if (user.isRegistered === true) {
+    if (user.isAuthenticated === true || user.isRegistered === true) {
       throw new ForbiddenException();
     }
 
