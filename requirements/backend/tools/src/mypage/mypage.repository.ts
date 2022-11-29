@@ -19,7 +19,6 @@ export class MypageRepository {
       return databaseResponse;
     } catch (error) {
       this.logger.error(`[${this.getUserInfo.name}] ${error}`);
-      console.log(error);
       throw error;
     }
   }
