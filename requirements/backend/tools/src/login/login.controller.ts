@@ -8,6 +8,7 @@ import {
   Post,
   Put,
   Res,
+  UnauthorizedException,
   UseGuards,
 } from '@nestjs/common';
 import {
@@ -31,11 +32,15 @@ import { TwoFactorDTO, FtUserDto, SignupDTO } from './dto/login.dto';
 import { JwtTwoFactorAuthGuard } from './jwt/jwt-twofactor-auth.guard';
 import { LoginService } from './login.service';
 import { JwtSignupAuthGuard } from './jwt/jwt-signup-auth.guard';
+import { UsersRepository } from 'src/users/users.repository';
 
 @Controller('/login')
 @ApiTags('로그인 API')
 export class LoginController {
-  constructor(private readonly loginService: LoginService) {}
+  constructor(
+    private readonly loginService: LoginService,
+    private readonly usersRepository: UsersRepository,
+  ) {}
 
   private readonly logger = new Logger(LoginController.name);
 
@@ -64,6 +69,10 @@ export class LoginController {
   @Get('/twofactor')
   async sendTwoFactorMail(@User() user: FtUserDto) {
     this.logger.log(`GET /login/twofactor`);
+    const isUserExist = await this.usersRepository.isUserExist(user.id);
+    if (isUserExist === false) {
+      throw new UnauthorizedException();
+    }
     await this.loginService.sendTwoFactorMail(user);
   }
 
@@ -90,7 +99,7 @@ export class LoginController {
     res.status(200).send();
   }
 
-  @ApiOperation({ summary: 'editprofile 입장 유효성 검사' })
+  @ApiOperation({ summary: 'signup 입장 유효성 검사' })
   @ApiOkResponse({ description: '회원 가입이 필요한 유저' })
   @ApiForbiddenResponse({ description: '이미 DB에 존재하는 유저' })
   @Public()
