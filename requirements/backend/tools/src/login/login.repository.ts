@@ -53,8 +53,8 @@ export class LoginRepository {
     }
   }
 
-  async isUserExistInDB(user_id: string): Promise<boolean> {
-    this.logger.log(`[${this.isUserExistInDB.name}]`);
+  async isUserIdExistInDB(user_id: string): Promise<boolean> {
+    this.logger.log(`[${this.isUserIdExistInDB.name}]`);
     try {
       const databaseResponse = await this.databaseService.runQuery(
         `
@@ -62,6 +62,26 @@ export class LoginRepository {
           WHERE id=$1;
         `,
         [user_id],
+      );
+      if (databaseResponse.length === 0) {
+        return false;
+      }
+      return true;
+    } catch (error) {
+      this.logger.error(error);
+      throw new InternalServerErrorException();
+    }
+  }
+
+  async isUserNicknameExistInDB(user_nickname: string): Promise<boolean> {
+    this.logger.log(`[${this.isUserNicknameExistInDB.name}]`);
+    try {
+      const databaseResponse = await this.databaseService.runQuery(
+        `
+          SELECT nickname FROM "user"
+          WHERE nickname=$1;
+        `,
+        [user_nickname],
       );
       if (databaseResponse.length === 0) {
         return false;

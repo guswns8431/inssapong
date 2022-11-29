@@ -31,7 +31,7 @@ export class FtStrategy extends PassportStrategy(Strategy, '42') {
     cb: VerifyCallback,
   ): Promise<any> {
     this.logger.log('[validate]');
-    const isRegistered: boolean = await this.loginRepository.isUserExistInDB(
+    const isRegistered: boolean = await this.loginRepository.isUserIdExistInDB(
       profile.id,
     );
 

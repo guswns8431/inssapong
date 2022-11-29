@@ -1,4 +1,9 @@
-import { ForbiddenException, Injectable, Logger } from '@nestjs/common';
+import {
+  ConflictException,
+  ForbiddenException,
+  Injectable,
+  Logger,
+} from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { MailService } from 'src/mail/mail.service';
 import { MainGateway } from 'src/sockets/main.gateway';
@@ -44,6 +49,13 @@ export class LoginService {
     const email = user.email;
     const nickname = signup_data.nickname;
     const avatar = signup_data.avatar;
+
+    const isUserNicknameExist =
+      await this.loginRepository.isUserNicknameExistInDB(nickname);
+    if (isUserNicknameExist === true) {
+      this.logger.error(`닉네임 ${nickname}: 이미 존재하는 닉네임입니다. `);
+      throw new ConflictException();
+    }
 
     // Description: DB에 유저 정보 저장
     await this.loginRepository.insertUserData(id, nickname, email, avatar);

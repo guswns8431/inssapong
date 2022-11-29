@@ -94,7 +94,7 @@ function getMyInfo() {
 function uploadImg(event: Event) {
   const max_size = MAX_IMG_SIZE;
   const files = (event.target as HTMLInputElement).files;
-  if (files) {
+  if (files && files.length) {
     if (files[0].size > max_size) {
       alert("프로필 사진의 파일 크기는 1MB 이내만 가능합니다");
       validation.value = "FALSE";
@@ -153,6 +153,10 @@ function sendNewInfo() {
         router.push({ name: "home" });
       })
       .catch((err) => {
+        if (err.response.status == 409) {
+          alert("닉네임이 중복됩니다");
+          router.go(0);
+        }
         console.log(
           "Error : EditProfile.vue : else if sendNewInfo() 오류 : " + err
         );
