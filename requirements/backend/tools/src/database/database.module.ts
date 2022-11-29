@@ -1,9 +1,7 @@
-import { Module, Logger } from '@nestjs/common';
+import { Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { Pool } from 'pg';
 import { DatabaseService } from './database.service';
-import { OnApplicationShutdown } from '@nestjs/common';
-import { ModuleRef } from '@nestjs/core';
 
 const databasePoolFactory = async (configService: ConfigService) => {
   return new Pool({

@@ -1,6 +1,5 @@
 import { CacheInterceptor, CacheModule, Module } from '@nestjs/common';
 import { AppController } from './app.controller';
-import { AppService } from './app.service';
 import { MainSocketModule } from './sockets/main.module';
 import { LoginModule } from './login/login.module';
 import { MypageModule } from './mypage/mypage.module';
@@ -13,25 +12,31 @@ import { JwtAuthGuard } from './login/jwt/jwt-auth.guard';
 import { APP_GUARD, APP_INTERCEPTOR } from '@nestjs/core';
 import { DatabaseModule } from './database/database.module';
 import configuration from 'config/configuration';
-import { LoginRepository } from './login/login.repository';
+import { AppRepository } from './app.repository';
 
 @Module({
   imports: [
     ConfigModule.forRoot({
       load: [configuration],
       validationSchema: Joi.object({
-        port: Joi.number().default(3000),
-        ft_uid: Joi.string(),
-        ft_secret: Joi.string(),
-        ft_redirect_url: Joi.string(),
-        jwt_secret: Joi.string(),
-        cookie_secret: Joi.string(),
-        jwt_expiration_time: Joi.number().default(3600),
-        postgres_host: Joi.string(),
-        postgres_port: Joi.number(),
-        postgres_user: Joi.string(),
-        postgres_password: Joi.string(),
-        postgres_name: Joi.string(),
+        DOMAIN: Joi.string().default('http://localhost').required(),
+        BACKEND_PORT: Joi.number().default(3000).required(),
+        FT_UID: Joi.string().required(),
+        FT_SECRET: Joi.string().required(),
+        FT_REDIRECT_URL: Joi.string().required(),
+        JWT_SECRET: Joi.string().required(),
+        JWT_EXPIRATION_TIME_LONG: Joi.number().default(86400),
+        JWT_EXPIRATION_TIME_SHORT: Joi.number().default(180),
+        MAIL_HOST: Joi.string().required(),
+        MAIL_FROM: Joi.string().required(),
+        MAIL_USER: Joi.string().required(),
+        MAIL_PASS: Joi.string().required(),
+        TWOFACTOR_EXPIRATION_TIME: Joi.number().default(180),
+        POSTGRES_HOST: Joi.string().default('localhost').required(),
+        POSTGRES_PORT: Joi.number().default(5432).required(),
+        POSTGRES_USER: Joi.string().required(),
+        POSTGRES_PASSWORD: Joi.string().required(),
+        POSTGRES_DB_NAME: Joi.string().required(),
       }),
     }),
     LoginModule,
@@ -47,8 +52,7 @@ import { LoginRepository } from './login/login.repository';
   ],
   controllers: [AppController],
   providers: [
-    AppService,
-    LoginRepository,
+    AppRepository,
     {
       provide: APP_GUARD,
       useClass: JwtAuthGuard,

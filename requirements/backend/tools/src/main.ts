@@ -3,7 +3,6 @@ import { NestFactory } from '@nestjs/core';
 import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
 import { json } from 'express';
 import { AppModule } from './app.module';
-// import * as cookieParser from 'cookie-parser'; // TODO: Encrypt cookie
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule, {
@@ -25,7 +24,6 @@ async function bootstrap() {
       transform: true,
     }),
   );
-  // app.use(cookieParser(process.env.COOKIE_SECRET)); // TODO: Env config. Encrypt cookie
   const DOMAIN = process.env.DOMAIN;
   const PORT = process.env.BACKEND_PORT;
   app.use(json({ limit: '1mb' }));

@@ -1,20 +1,29 @@
-import { Controller, Get, Logger, Req, Res } from '@nestjs/common';
-import { AppService } from './app.service';
+import {
+  Controller,
+  Get,
+  Header,
+  Res,
+  UnauthorizedException,
+} from '@nestjs/common';
+import { AppRepository } from './app.repository';
+import { FtUserDto } from './login/dto/login.dto';
+import { User } from './login/user.decorator';
 
 // 2-1
 @Controller('')
 export class AppController {
-  private readonly logger: Logger = new Logger(AppController.name);
-  constructor(private readonly appService: AppService) {}
+  constructor(private readonly appRepository: AppRepository) {}
 
+  @Header('Access-Control-Allow-Credentials', 'true')
+  @Header('Access-Control-Allow-Origin', 'http://localhost:8080')
   @Get('/loginCheck')
-  loginCheckGet(@Req() req, @Res() res) {
-    const user_id = req.user.id;
-    // id가 db에 존재하나요?
-    // - 존재하지 않는다면 jwt isRegisterd? = false
-    // - 존재하면 ok
-
-    res.status(200).send(user_id);
+  async loginCheck(@User() user: FtUserDto, @Res() res) {
+    const isUserExist = await this.appRepository.isUserExist(user.id);
+    if (isUserExist === false) {
+      res.cookie('Authorization', '');
+      throw new UnauthorizedException();
+    }
+    res.status(200).send(user.id);
     return;
   }
 }
