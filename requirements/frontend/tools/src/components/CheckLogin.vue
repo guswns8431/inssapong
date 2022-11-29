@@ -35,7 +35,9 @@ instance.interceptors.request.use(
 // 서버에 get 요청을 보내 토큰이 유효한가 확인
 async function loginCheck() {
   try {
-    const response = await instance.get("/loginCheck", { withCredentials: true });
+    const response = await instance.get("/loginCheck", {
+      withCredentials: true,
+    });
     UserData.user_id = response.data;
     return true;
   } catch {
