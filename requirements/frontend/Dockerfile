@@ -14,4 +14,4 @@ RUN			npm cache clean -f &&\
 COPY		./tools ./frontend
 WORKDIR		/frontend
 RUN			npm i
-CMD			npm run start:dev
+CMD			npm run serve
