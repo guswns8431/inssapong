@@ -7,7 +7,6 @@ import {
   Logger,
   Post,
   Put,
-  Req,
   Res,
   UseGuards,
 } from '@nestjs/common';

@@ -1,7 +1,6 @@
 import {
   ExecutionContext,
   Injectable,
-  InternalServerErrorException,
   Logger,
 } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';

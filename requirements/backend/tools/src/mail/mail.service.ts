@@ -1,6 +1,5 @@
 import { MailerService } from '@nestjs-modules/mailer';
 import {
-  BadRequestException,
   CACHE_MANAGER,
   Inject,
   Injectable,
