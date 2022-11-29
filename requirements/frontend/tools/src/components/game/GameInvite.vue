@@ -17,7 +17,7 @@
 <script setup lang="ts">
 import router from "@/router";
 import { UserData } from "@/store/UserData";
-import { ref } from "vue";
+import { onUnmounted, ref } from "vue";
 
 const toast = ref(false);
 const title = ref("");
@@ -69,6 +69,13 @@ function goHome() {
   setToastFalse();
   router.push({ name: "home" });
 }
+
+onUnmounted(() => {
+  UserData.socket.removeAllListeners("game/invite");
+  UserData.socket.removeAllListeners("game/failAcceptInvite");
+  UserData.socket.removeAllListeners("game/failInvite");
+  UserData.socket.removeAllListeners("game/notInvited");
+});
 </script>
 
 <style>

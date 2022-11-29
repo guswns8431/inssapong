@@ -4,7 +4,7 @@
 
 <script setup lang="ts">
 import { UserData } from "@/store/UserData";
-import { onMounted } from "vue";
+import { onMounted, onUnmounted } from "vue";
 import { useRoute } from "vue-router";
 import router from "@/router";
 
@@ -25,5 +25,9 @@ function enter() {
 
 onMounted(() => {
   enter();
+});
+
+onUnmounted(() => {
+  UserData.socket.removeAllListeners("channel/checkEnteredFail");
 });
 </script>

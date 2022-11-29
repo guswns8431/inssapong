@@ -19,7 +19,7 @@
 
 <script setup lang="ts">
 import { useRoute } from "vue-router";
-import { onMounted, ref } from "vue";
+import { onMounted, onUnmounted, ref } from "vue";
 import { UserData } from "@/store/UserData";
 import UserStatus from "../UserStatus.vue";
 import router from "@/router";
@@ -60,6 +60,12 @@ function userProfile(user_id: string) {
 onMounted(async () => {
   await getUsers();
   member_available.value = true;
+});
+
+onUnmounted(() => {
+  UserData.socket.removeAllListeners(
+    `channel/changedChannelMember/${channel_id}`
+  );
 });
 </script>
 

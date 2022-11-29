@@ -25,7 +25,7 @@
 <script setup lang="ts">
 import router from "@/router";
 import { UserData } from "@/store/UserData";
-import { ref, nextTick, onMounted } from "vue";
+import { ref, nextTick, onMounted, onUnmounted } from "vue";
 import { useRoute } from "vue-router";
 
 interface message {
@@ -99,6 +99,12 @@ async function scrollDown() {
 
 onMounted(() => {
   getChannelName();
+});
+
+onUnmounted(() => {
+  UserData.socket.removeAllListeners("channel/send");
+  UserData.socket.removeAllListeners("channel/commandFailed");
+  UserData.socket.removeAllListeners("channel/exit");
 });
 </script>
 

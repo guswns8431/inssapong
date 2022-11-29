@@ -14,10 +14,9 @@
 
 <script setup lang="ts">
 import { UserData } from "@/store/UserData";
-import { ref } from "vue";
+import { onBeforeUnmount, onMounted, onUnmounted, ref } from "vue";
 import router from "@/router";
 
-const reverse_key_flag = ref(false);
 const reverse_key_text = ref("on");
 const main_text = ref();
 const giveup_text = ref();
@@ -81,11 +80,11 @@ UserData.socket.on("game/giveUp", (s_player_id: string) => {
 });
 
 function reverseKey() {
-  reverse_key_flag.value = !reverse_key_flag.value;
-  if (reverse_key_flag.value == true) {
-    reverse_key_text.value = "off";
-  } else {
+  UserData.socket.emit("game/reverse");
+  if (reverse_key_text.value == "off") {
     reverse_key_text.value = "on";
+  } else {
+    reverse_key_text.value = "off";
   }
 }
 
@@ -99,22 +98,36 @@ function gameOver() {
 }
 
 function move(event: KeyboardEvent) {
+  console.log("move", event.key);
   if (event.key == "ArrowUp") {
-    if (reverse_key_flag.value == false) {
-      UserData.socket.emit("game/move", "up");
-    } else {
-      UserData.socket.emit("game/move", "down");
-    }
+    UserData.socket.emit("game/move", "up");
   } else if (event.key == "ArrowDown") {
-    if (reverse_key_flag.value == false) {
-      UserData.socket.emit("game/move", "down");
-    } else {
-      UserData.socket.emit("game/move", "up");
-    }
+    UserData.socket.emit("game/move", "down");
   }
 }
 
 function goHome() {
   router.push({ name: "home" });
 }
+
+async function exitGame() {
+  console.log("game component");
+  await UserData.socket.emit("game/exit", "");
+}
+
+onMounted(async () => {
+  window.addEventListener("beforeunload", await exitGame);
+});
+
+onBeforeUnmount(() => {
+  window.removeEventListener("beforeunload", exitGame);
+});
+
+onUnmounted(() => {
+  UserData.socket.removeAllListeners("game/start");
+  UserData.socket.removeAllListeners("game/watchStart");
+  UserData.socket.removeAllListeners("game/nextRound");
+  UserData.socket.removeAllListeners("game/end");
+  window.removeEventListener("keydown", move);
+});
 </script>

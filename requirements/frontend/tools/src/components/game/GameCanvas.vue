@@ -6,7 +6,7 @@
 
 <script setup lang="ts">
 import { UserData } from "@/store/UserData";
-import { onMounted, ref } from "vue";
+import { onMounted, onUnmounted, ref } from "vue";
 
 const game_canvas = ref();
 let canvas: CanvasRenderingContext2D;
@@ -54,6 +54,12 @@ UserData.socket.on("game/endCanvas", () => {
 
 onMounted(() => {
   canvas = game_canvas.value.getContext("2d");
+});
+
+onUnmounted(() => {
+  UserData.socket.removeAllListeners("game/initCanvas");
+  UserData.socket.removeAllListeners("game/draw");
+  UserData.socket.removeAllListeners("game/endCanvas");
 });
 </script>
 

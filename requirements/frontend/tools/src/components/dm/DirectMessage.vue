@@ -24,7 +24,7 @@
 
 <script setup lang="ts">
 import { UserData } from "@/store/UserData";
-import { ref, nextTick, onMounted } from "vue";
+import { ref, nextTick, onMounted, onUnmounted } from "vue";
 import { useRoute } from "vue-router";
 
 const receive_message = ref([{ sender: "", message: "" }]);
@@ -77,6 +77,10 @@ async function scrollDown() {
 
 onMounted(() => {
   enteredDM();
+});
+
+onUnmounted(() => {
+  UserData.socket.removeAllListeners("DM/send");
 });
 </script>
 

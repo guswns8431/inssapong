@@ -30,8 +30,9 @@ async function exitGameView() {
 }
 
 onUnmounted(async () => {
+  UserData.socket.removeAllListeners("game/getRoomId");
+  UserData.socket.removeAllListeners("game/giveUp");
   await exitGameView();
 });
 </script>
-
 <style></style>

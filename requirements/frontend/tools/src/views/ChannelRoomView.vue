@@ -25,7 +25,7 @@ import MessageWindow from "@/components/channel/ChannelMessage.vue";
 import NavBar from "@/components/mypage/NavBar.vue";
 import { useRouter, useRoute } from "vue-router";
 import { UserData } from "@/store/UserData";
-import { ref } from "vue";
+import { onUnmounted, ref } from "vue";
 
 const router = useRouter();
 const route = useRoute();
@@ -55,6 +55,10 @@ function exitChannel() {
       alert("나가기 실패!");
     });
 }
+
+onUnmounted(() => {
+  UserData.socket.removeAllListeners("channel/checkEnteredSuccess");
+});
 </script>
 
 <style scoped>
