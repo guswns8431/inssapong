@@ -6,8 +6,9 @@ re: clean all
 stop:
 	docker-compose stop
 
-clean: stop
-	docker-compose down
+clean: 
+	docker-compose -f docker-compose.yml down -v --rmi all --remove-orphans
+	docker system prune --volumes --all --force
 
 ps:
 	docker-compose ps
@@ -38,6 +39,7 @@ onlyb:
 
 onlyd:
 	docker-compose start database
+
 
 .PHONY : all re stop clean ps
 
