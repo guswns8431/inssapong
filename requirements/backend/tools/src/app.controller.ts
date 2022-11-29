@@ -15,9 +15,7 @@ export class AppController {
   constructor(private readonly usersRepository: UsersRepository) {}
 
   @Get('/loginCheck')
-  async loginCheck(@User() user: FtUserDto, @Res() res, @Body() body) {
-    console.log('loginCheck');
-    console.log(body);
+  async loginCheck(@User() user: FtUserDto, @Res() res) {
     const isUserExist = await this.usersRepository.isUserExist(user.id);
     if (isUserExist === false) {
       throw new UnauthorizedException();

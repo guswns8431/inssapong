@@ -10,6 +10,7 @@ import { DatabaseModule } from 'src/database/database.module';
 import { MailModule } from '../mail/mail.module';
 import { MainSocketModule } from 'src/sockets/main.module';
 import { LoginService } from './login.service';
+import { UsersRepository } from 'src/users/users.repository';
 
 @Module({
   imports: [
@@ -30,6 +31,12 @@ import { LoginService } from './login.service';
     MainSocketModule,
   ],
   controllers: [LoginController],
-  providers: [FtStrategy, JwtStrategy, LoginRepository, LoginService],
+  providers: [
+    FtStrategy,
+    JwtStrategy,
+    LoginRepository,
+    LoginService,
+    UsersRepository,
+  ],
 })
 export class LoginModule {}
