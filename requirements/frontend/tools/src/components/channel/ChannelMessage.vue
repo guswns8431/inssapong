@@ -55,7 +55,7 @@ UserData.socket.on("channel/commandFailed", (s_error: string) => {
 // ban, kick 당했을 때 채널 페이지 exit
 UserData.socket.on("channel/exit", (s_command) => {
   alert(`${s_command} 당했습니다!`);
-  router.push({ name: "chat" });
+  router.push({ name: "channelHome" });
 });
 
 function getChannelName() {
