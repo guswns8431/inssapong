@@ -41,11 +41,6 @@ onlyd:
 	docker-compose start database
 
 
-.PHONY : all re stop clean ps
-
-# docker container stop $(docker ps -a -q) &&\
-# docker rmi -f $(docker images -qa) &&\
-# docker volume rm $(docker volume ls -q) &&\
-# docker system prune
+.PHONY : all re stop clean ps f b d logf logb logd onlyf onlyb onlyd
 
 # sudo lsof -PiTCP -sTCP:LISTEN
