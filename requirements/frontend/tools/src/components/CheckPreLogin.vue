@@ -35,7 +35,8 @@ async function checkTwoFactor() {
     await instance.get("/login/twofactor");
   } catch (err) {
     cookies.keys().forEach((cookie) => cookies.remove(cookie));
-    console.log("Error : CheckTwoFactor.vue checkFristLogin() 함수 " + err);
+    console.log("Error : CheckTwoFactor.vue checkTwoFactor() 함수 " + err);
+    alert("login 먼저 해주세요!");
     router.push({ name: "start" });
   }
 }
@@ -45,6 +46,7 @@ async function checkFirstLogin() {
     await instance.get("/login/signup");
   } catch (err) {
     console.log("Error : FirstLogin.vue : checkFirstLogin() 오류 : + " + err);
+    alert("login 먼저 해주세요!");
     router.push({ name: "start" });
   }
 }
