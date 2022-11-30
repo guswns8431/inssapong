@@ -48,7 +48,7 @@ UserData.socket.on("channel/send", (s_send_id: string, s_message: string) => {
 
 // 명령어 실패
 UserData.socket.on("channel/commandFailed", (s_error: string) => {
-  receive_message.value.push({ sender: "[SERVER]", message: s_error });
+  receive_message.value.push({ sender: "server", message: s_error });
   scrollDown();
 });
 
