@@ -98,7 +98,6 @@ function gameOver() {
 }
 
 function move(event: KeyboardEvent) {
-  console.log("move", event.key);
   if (event.key == "ArrowUp") {
     UserData.socket.emit("game/move", "up");
   } else if (event.key == "ArrowDown") {
