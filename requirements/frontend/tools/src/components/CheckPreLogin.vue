@@ -11,6 +11,9 @@ import { VueCookies } from "vue-cookies";
 
 const cookies: VueCookies | undefined = inject<VueCookies>("$cookies");
 const token = cookies.get("Authorization");
+const inject_setCheckLoginAvailable: () => void = inject(
+  "setCheckLoginAvailable"
+);
 
 // axios 생성
 const instance = axios.create({
@@ -34,10 +37,9 @@ async function checkTwoFactor() {
   try {
     await instance.get("/login/twofactor");
   } catch (err) {
-    cookies.keys().forEach((cookie) => cookies.remove(cookie));
     console.log("Error : CheckTwoFactor.vue checkTwoFactor() 함수 " + err);
-    alert("login 먼저 해주세요!");
-    router.push({ name: "start" });
+    inject_setCheckLoginAvailable();
+    router.push({ name: "home" });
   }
 }
 
@@ -46,8 +48,8 @@ async function checkFirstLogin() {
     await instance.get("/login/signup");
   } catch (err) {
     console.log("Error : FirstLogin.vue : checkFirstLogin() 오류 : + " + err);
-    alert("login 먼저 해주세요!");
-    router.push({ name: "start" });
+    inject_setCheckLoginAvailable();
+    router.push({ name: "home" });
   }
 }
 

@@ -38,7 +38,7 @@ async function loginCheck() {
     const response = await instance.get("/loginCheck");
     UserData.user_id = response.data;
     return true;
-  } catch {
+  } catch (err) {
     cookies.keys().forEach((cookie) => cookies.remove(cookie));
     alert("login 먼저 해주세요!");
     router.push({ name: "start" });
