@@ -98,10 +98,10 @@ export class GameGateway {
 
     let value = 1;
     if ('up' == data) {
-      if (player.gameInfo.reverse_key == true) value = -1;
+      if (player.gameInfo.reverse_key == false) value = -1;
       else value = 1;
     } else if ('down' == data) {
-      if (player.gameInfo.reverse_key == true) value = 1;
+      if (player.gameInfo.reverse_key == false) value = 1;
       else value = -1;
     }
     if (
