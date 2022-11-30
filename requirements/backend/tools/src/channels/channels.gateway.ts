@@ -134,7 +134,7 @@ export class ChannelsGateway {
       return;
     }
 
-    if (this.isCommand(client, req) == true) return;
+    if (await this.isCommand(client, req) == true) return;
 
     const db_result = await this.channelsRepository.insertChannelMessage(
       req.channel_id,
@@ -244,7 +244,7 @@ export class ChannelsGateway {
     }
   }
 
-  isCommand(client: Socket, req: any) {
+  async isCommand(client: Socket, req: any) {
     if (!(req.message[0] == '[' && -1 < req.message.search(']'))) {
       return false;
     }
@@ -317,6 +317,10 @@ export class ChannelsGateway {
       client.emit('channel/commandFailed', '아이디가 존재하지 않습니다.');
       return;
     }
+    if (await this.isChannelMember(client, req, admin_id) == false) {
+      client.emit('channel/commandFailed', '채널에 없는 사용자입니다.');
+      return;
+    }
 
     const authority = await this.getAuthority(
       client,
@@ -361,6 +365,10 @@ export class ChannelsGateway {
       client.emit('channel/commandFailed', '아이디가 존재하지 않습니다.');
       return;
     }
+    if (await this.isChannelMember(client, req, kick_id) == false) {
+      client.emit('channel/commandFailed', '채널에 없는 사용자입니다.');
+      return;
+    }
 
     const authority = await this.getAuthority(
       client,
@@ -398,6 +406,10 @@ export class ChannelsGateway {
       client.emit('channel/commandFailed', '아이디가 존재하지 않습니다.');
       return;
     }
+    if (await this.isChannelMember(client, req, mute_id) == false) {
+      client.emit('channel/commandFailed', '채널에 없는 사용자입니다.');
+      return;
+    }
 
     const authority = await this.getAuthority(
       client,
@@ -432,6 +444,10 @@ export class ChannelsGateway {
     const is_user_exist = await this.channelsRepository.isUserExist(ban_id);
     if (is_user_exist == 404) {
       client.emit('channel/commandFailed', '아이디가 존재하지 않습니다.');
+      return;
+    }
+    if (await this.isChannelMember(client, req, ban_id) == false) {
+      client.emit('channel/commandFailed', '채널에 없는 사용자입니다.');
       return;
     }
 
@@ -519,5 +535,20 @@ export class ChannelsGateway {
     else {
       return false;
     }
+  }
+
+  async isChannelMember(client: Socket, req: any, user: string) {
+    const status_code = await this.channelsRepository.checkEnteredChannel(
+      user,
+      req.channel_id,
+    );
+    if (status_code == 400) {
+      return false;
+    }
+    if (status_code == 500) {
+      client.emit('DBError');
+      return false;
+    }
+    return true;
   }
 }

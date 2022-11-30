@@ -1,6 +1,5 @@
 import {
   Injectable,
-  InternalServerErrorException,
   Logger,
 } from '@nestjs/common';
 import { DatabaseService } from 'src/database/database.service';
@@ -243,7 +242,7 @@ export class UsersRepository {
       return true;
     } catch (error) {
       this.logger.error(`[${this.isUserExist.name}] ${error}`);
-      throw new InternalServerErrorException();
+      throw error;
     }
   }
 }

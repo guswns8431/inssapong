@@ -38,6 +38,7 @@ import { VueCookies } from "vue-cookies";
 const cookies: VueCookies = inject<VueCookies>("$cookies");
 const router = useRouter();
 const search_id = ref("");
+const inject_init: () => void = inject("init");
 
 function goHomeView() {
   router.push({ name: "home" });
@@ -58,6 +59,7 @@ function goChatView() {
 async function logout() {
   cookies.keys().forEach((cookie) => cookies.remove(cookie));
   alert("logout!");
+  inject_init();
   router.push({ name: "start" });
 }
 

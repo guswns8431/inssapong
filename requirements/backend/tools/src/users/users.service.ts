@@ -1,6 +1,6 @@
 import {
+  ImATeapotException,
   Injectable,
-  InternalServerErrorException,
   Logger,
   NotFoundException,
 } from '@nestjs/common';
@@ -28,9 +28,9 @@ export class UsersService {
       else return Relation_status.BLOCK;
     } else {
       this.logger.error(
-        `[${this.getRelationStatus.name}] ${InternalServerErrorException.name} 서버 에러`,
+        `[${this.getRelationStatus.name}] ${ImATeapotException.name} 서버 에러`,
       );
-      throw new InternalServerErrorException('서버 에러');
+      throw new ImATeapotException('ㅇㅡㅇ');
     }
   }
 
@@ -45,9 +45,9 @@ export class UsersService {
       await this.usersRepository.insertFollowStatus(user_id, partner_id);
     else {
       this.logger.error(
-        `[${this.onFollowStatus.name}] ${InternalServerErrorException.name} 서버 에러`,
+        `[${this.onFollowStatus.name}] ${ImATeapotException.name} 서버 에러`,
       );
-      throw new InternalServerErrorException('서버 에러');
+      throw new ImATeapotException('ㅇㅡㅇ');
     }
   }
 
@@ -61,9 +61,9 @@ export class UsersService {
       throw new NotFoundException(`${target_id}: 존재하지 않는 유저`);
     } else {
       this.logger.error(
-        `[${this.onFollowStatus.name}] ${InternalServerErrorException.name} 서버 에러`,
+        `[${this.onFollowStatus.name}] ${ImATeapotException.name} 서버 에러`,
       );
-      throw new InternalServerErrorException('서버 에러');
+      throw new ImATeapotException('ㅇㅡㅇ');
     }
   }
 

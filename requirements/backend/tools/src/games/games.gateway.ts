@@ -298,6 +298,9 @@ export class GameGateway {
     if (p1 != undefined) {
       return;
     }
+    this.mainGateway.invitePlayer = this.mainGateway.invitePlayer.filter(
+      (element) => element.id != partner.socket.id,
+    );
     this.startGame(player, partner);
   }
 

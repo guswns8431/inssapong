@@ -50,9 +50,9 @@ function exitChannel() {
     .then(() => {
       router.push({ name: "channelHome" });
     })
-    .catch((err: object) => {
-      console.log(err);
+    .catch(() => {
       alert("나가기 실패!");
+      router.push({ name: "channelHome" });
     });
 }
 

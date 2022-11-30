@@ -16,14 +16,21 @@
 import router from "@/router";
 import NavBar from "@/components/mypage/NavBar.vue";
 import { UserData } from "@/store/UserData";
-import { ref } from "vue";
+import { inject, ref } from "vue";
+import { onBeforeRouteUpdate } from "vue-router";
 
 const user_id = ref("");
 user_id.value = UserData.user_id;
+const inject_init: () => void = inject("init");
 
 function goGameView() {
   router.push({ name: "game" });
 }
+
+onBeforeRouteUpdate(async () => {
+  console.log("hihihihi");
+  inject_init();
+});
 </script>
 
 <style scoped>

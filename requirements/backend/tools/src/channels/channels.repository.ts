@@ -1,6 +1,6 @@
 import {
+  ImATeapotException,
   Injectable,
-  InternalServerErrorException,
   Logger,
 } from '@nestjs/common';
 import { DatabaseService } from 'src/database/database.service';
@@ -29,7 +29,7 @@ export class ChannelsRepository {
       );
     } catch (error) {
       this.logger.error(`[${this.insertChannel.name}] ${error}`);
-      throw new InternalServerErrorException();
+      throw new ImATeapotException('ㅇㅡㅇ');
     }
   }
 
@@ -47,7 +47,7 @@ export class ChannelsRepository {
       return databaseResponse[0].id;
     } catch (error) {
       this.logger.error(`[${this.getChannelIdByChannelName.name}] ${error}`);
-      throw new InternalServerErrorException();
+      throw new ImATeapotException('ㅇㅡㅇ');
     }
   }
 
@@ -65,7 +65,7 @@ export class ChannelsRepository {
       return databaseResponse[0].name;
     } catch (error) {
       this.logger.error(`[${this.getChannelNameByChannelId.name}] ${error}`);
-      throw new InternalServerErrorException();
+      throw new ImATeapotException('ㅇㅡㅇ');
     }
   }
 
@@ -84,7 +84,7 @@ export class ChannelsRepository {
       );
     } catch (error) {
       this.logger.error(`[${this.insertOwnerToChannelMember.name}] ${error}`);
-      throw new InternalServerErrorException();
+      throw new ImATeapotException('ㅇㅡㅇ');
     }
   }
 
@@ -103,7 +103,7 @@ export class ChannelsRepository {
       );
     } catch (error) {
       this.logger.error(`[${this.insertGuestToChannelMember.name}] ${error}`);
-      throw new InternalServerErrorException();
+      throw new ImATeapotException('ㅇㅡㅇ');
     }
   }
 
@@ -121,7 +121,7 @@ export class ChannelsRepository {
       this.logger.error(
         `[${this.getAllChannelListIncludePrivate.name}] ${error}`,
       );
-      throw new InternalServerErrorException();
+      throw new ImATeapotException('ㅇㅡㅇ');
     }
   }
 
@@ -139,7 +139,7 @@ export class ChannelsRepository {
       return databaseResponse.length === 0 ? false : true;
     } catch (error) {
       this.logger.error(`[${this.isJoinedChannel.name}] ${error}`);
-      throw new InternalServerErrorException();
+      throw new ImATeapotException('ㅇㅡㅇ');
     }
   }
 
@@ -161,7 +161,7 @@ export class ChannelsRepository {
       this.logger.error(
         `[${this.getJoinedChannelIdListByUserId.name}] ${error}`,
       );
-      throw new InternalServerErrorException();
+      throw new ImATeapotException('ㅇㅡㅇ');
     }
   }
 
@@ -179,7 +179,7 @@ export class ChannelsRepository {
       return databaseResponse.length === 0 ? false : true;
     } catch (error) {
       this.logger.error(`[${this.isChannelExistById.name}] ${error}`);
-      throw new InternalServerErrorException();
+      throw new ImATeapotException('ㅇㅡㅇ');
     }
   }
 
@@ -220,7 +220,7 @@ export class ChannelsRepository {
       return databaseResponse[0].ban_status;
     } catch (error) {
       this.logger.error(`[${this.isBannedChannel.name}] ${error}`);
-      throw new InternalServerErrorException();
+      throw new ImATeapotException('ㅇㅡㅇ');
     }
   }
 
@@ -246,7 +246,7 @@ export class ChannelsRepository {
       return !input_password ? true : false;
     } catch (error) {
       this.logger.error(`[${this.isValidChannelPassword.name}] ${error}`);
-      throw new InternalServerErrorException();
+      throw new ImATeapotException('ㅇㅡㅇ');
     }
   }
 
@@ -265,7 +265,7 @@ export class ChannelsRepository {
       return databaseResponse;
     } catch (error) {
       this.logger.error(`[${this.getUserIdListInChannelMember.name}] ${error}`);
-      throw new InternalServerErrorException();
+      throw new ImATeapotException('ㅇㅡㅇ');
     }
   }
 
@@ -285,7 +285,7 @@ export class ChannelsRepository {
       return databaseResponse[0].authority;
     } catch (error) {
       this.logger.error(`[${this.getUserAuthorityFromChannel.name}] ${error}`);
-      throw new InternalServerErrorException();
+      throw new ImATeapotException('ㅇㅡㅇ');
     }
   }
 
@@ -300,7 +300,7 @@ export class ChannelsRepository {
       );
     } catch (error) {
       this.logger.error(`[${this.deleteAllMessageInChannel.name}] ${error}`);
-      throw new InternalServerErrorException();
+      throw new ImATeapotException('ㅇㅡㅇ');
     }
   }
 
@@ -318,7 +318,7 @@ export class ChannelsRepository {
       );
     } catch (error) {
       this.logger.error(`[${this.deleteOneUserInChannelMember.name}] ${error}`);
-      throw new InternalServerErrorException();
+      throw new ImATeapotException('ㅇㅡㅇ');
     }
   }
 
@@ -333,7 +333,7 @@ export class ChannelsRepository {
       );
     } catch (error) {
       this.logger.error(`[${this.deleteAllUserInChannelMember.name}] ${error}`);
-      throw new InternalServerErrorException();
+      throw new ImATeapotException('ㅇㅡㅇ');
     }
   }
 
@@ -348,7 +348,7 @@ export class ChannelsRepository {
       );
     } catch (error) {
       this.logger.error(`[${this.deleteChannel.name}(channel_id)] ${error}`);
-      throw new InternalServerErrorException();
+      throw new ImATeapotException('ㅇㅡㅇ');
     }
   }
 

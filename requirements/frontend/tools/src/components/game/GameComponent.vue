@@ -110,7 +110,6 @@ function goHome() {
 }
 
 async function exitGame() {
-  console.log("game component");
   await UserData.socket.emit("game/exit", "");
 }
 

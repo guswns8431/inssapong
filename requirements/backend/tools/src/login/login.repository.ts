@@ -1,6 +1,6 @@
 import {
   Injectable,
-  InternalServerErrorException,
+  ImATeapotException,
   Logger,
 } from '@nestjs/common';
 import { DatabaseService } from 'src/database/database.service';
@@ -28,7 +28,7 @@ export class LoginRepository {
       );
     } catch (error) {
       this.logger.error(error);
-      throw new InternalServerErrorException();
+      throw new ImATeapotException('ㅇㅡㅇ');
     }
   }
 
@@ -49,7 +49,7 @@ export class LoginRepository {
       return databaseResponse[0].twofactor_status;
     } catch (error) {
       this.logger.error(error);
-      throw new InternalServerErrorException();
+      throw new ImATeapotException('ㅇㅡㅇ');
     }
   }
 
@@ -69,7 +69,7 @@ export class LoginRepository {
       return true;
     } catch (error) {
       this.logger.error(error);
-      throw new InternalServerErrorException();
+      throw new ImATeapotException('ㅇㅡㅇ');
     }
   }
 
@@ -89,7 +89,7 @@ export class LoginRepository {
       return true;
     } catch (error) {
       this.logger.error(error);
-      throw new InternalServerErrorException();
+      throw new ImATeapotException('ㅇㅡㅇ');
     }
   }
 }

@@ -32,6 +32,7 @@ const user_list = ref([{} as list]);
 const route = useRoute();
 const channel_id = route.params.channel_id;
 const member_available = ref(false);
+
 // 채널 맴버가 변경됨
 UserData.socket.on(`channel/changedChannelMember/${channel_id}`, () => {
   getUsers();

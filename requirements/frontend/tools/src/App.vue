@@ -13,7 +13,9 @@ import CatchDBError from "@/components/CatchDBError.vue";
 import GameInvite from "./components/game/GameInvite.vue";
 import CheckPreLogin from "./components/CheckPreLogin.vue";
 import { UserData } from "./store/UserData";
+import { useRouter, onBeforeRouteUpdate } from "vue-router";
 
+const router = useRouter();
 const router_available = ref(false);
 const checklogin_available = ref(false);
 const checkpreLogin_available = ref(false);
@@ -45,6 +47,23 @@ function setCheckLoginAvailable() {
   router_available.value = false;
 }
 provide("setCheckLoginAvailable", setCheckLoginAvailable);
+
+function init() {
+  router_available.value = false;
+  checklogin_available.value = false;
+  checkpreLogin_available.value = false;
+  checklogin_available.value =
+    window.location.pathname != "/" &&
+    window.location.pathname != "/twofactor" &&
+    window.location.pathname != "/signup";
+  checkpreLogin_available.value =
+    window.location.pathname == "/twofactor" ||
+    window.location.pathname == "/signup";
+  socket_available.value = false;
+  router_available.value = !checklogin_available.value;
+  console.log("good!");
+}
+provide("init", init);
 
 async function exitGame() {
   if (socket_available.value == true)

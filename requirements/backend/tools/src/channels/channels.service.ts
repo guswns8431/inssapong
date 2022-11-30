@@ -214,6 +214,7 @@ export class ChannelsService {
       await this.channelsRepository.deleteChannel(channel_id);
       this.logger.log(`${channel_id} 채널 삭제에 성공했습니다.`);
       this.mainGateway.changedChannelList();
+      this.mainGateway.changedChannelMember(user_id, channel_id);
     } else {
       // Description: channel_member 테이블에서 내가 입장한 channel_id를 삭제
       await this.channelsRepository.deleteOneUserInChannelMember(
