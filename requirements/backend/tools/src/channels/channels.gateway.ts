@@ -257,6 +257,10 @@ export class ChannelsGateway {
       .replace(/\s/g, '')
       .toLowerCase();
 
+    if (this.is_me(req.sender_id, content) == true) {
+      client.emit('channel/commandFailed', '자기 자신은 설정할 수 없습니다.');
+      return true;
+    }
     switch (keyword) {
       case CHANNEL_COMMAND.CHPWD:
         this.changeChannelPassword(client, req, content);
@@ -506,5 +510,14 @@ export class ChannelsGateway {
       return '';
     }
     return;
+  }
+
+  is_me(user_id: string, partner_id: string) {
+    if (user_id == partner_id) {
+      return true;
+    }
+    else {
+      return false;
+    }
   }
 }
