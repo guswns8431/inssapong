@@ -2,15 +2,13 @@ version: "3"
 
 services:
   database:
-    image: postgres:latest
+    build: ./requirements/database
     container_name: container_database
     restart: always
     ports:
       - 5432:5432
     env_file:
       - .env
-    volumes:
-      - ./requirements/database/db_init.sql:/docker-entrypoint-initdb.d/db_init.sql
 
   backend:
     build: ./requirements/backend
