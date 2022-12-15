@@ -41,10 +41,15 @@ const element = ref();
 const channel_name = ref("");
 
 // 메세지 받기
-UserData.socket.on("channel/send", (s_send_id: string, s_message: string) => {
-  receive_message.value.push({ sender: s_send_id, message: s_message });
-  scrollDown();
-});
+UserData.socket.on(
+  "channel/send",
+  (s_send_id: string, s_message: string, s_channel_id: string) => {
+    if (s_channel_id == channel_id) {
+      receive_message.value.push({ sender: s_send_id, message: s_message });
+      scrollDown();
+    }
+  }
+);
 
 // 명령어 실패
 UserData.socket.on("channel/commandFailed", (s_error: string) => {

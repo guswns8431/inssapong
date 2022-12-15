@@ -136,7 +136,6 @@ export class GameGateway {
       this.logger.log(`[movePlayer] : ${player.gameInfo.room_id} error.`);
       return;
     }
-    this.logger.error(`${player.id}, ${gameRoom.room_id}`);
     player.gameInfo.reverse_key = !player.gameInfo.reverse_key;
   }
 
@@ -279,6 +278,7 @@ export class GameGateway {
     }
     if (partner == undefined) {
       this.logger.log(`[checkInvitePlayers] : ${req.partner_id}`);
+      client.emit('game/failAcceptInvite', req.partner_id);
       return;
     }
     if (partner.status != USER_STATUS.ONLINE) {

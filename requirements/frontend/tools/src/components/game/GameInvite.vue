@@ -41,14 +41,14 @@ UserData.socket.on("game/failInvite", (s_user_id) => {
   title.value = "게임 초대 실패";
   body.value = `${s_user_id} 게임 초대 요청이 실패했습니다!`;
   toast.value = true;
-  router.push({ name: "home" });
+  // router.push({ name: "home" });
 });
 
 UserData.socket.on("game/notInvited", (s_user_id) => {
   title.value = "게임 입장 실패";
   body.value = `${s_user_id}에게 초대를 보내주세요!`;
   toast.value = true;
-  router.push({ name: "home" });
+  // router.push({ name: "home" });
 });
 
 function setToastFalse() {
@@ -57,7 +57,7 @@ function setToastFalse() {
   toast.value = false;
 }
 
-function acceptedInvite() {
+async function acceptedInvite() {
   setToastFalse();
   router.push({
     name: "invitedGame",
@@ -70,11 +70,15 @@ function goHome() {
   router.push({ name: "home" });
 }
 
-onUnmounted(() => {
+function removeSocketEvent() {
   UserData.socket.removeAllListeners("game/invite");
   UserData.socket.removeAllListeners("game/failAcceptInvite");
   UserData.socket.removeAllListeners("game/failInvite");
   UserData.socket.removeAllListeners("game/notInvited");
+}
+
+onUnmounted(() => {
+  removeSocketEvent();
 });
 </script>
 

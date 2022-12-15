@@ -19,7 +19,7 @@
 </template>
 
 <script setup lang="ts">
-import PartiUser from "../components/channel/PartiUser.vue";
+import PartiUser from "@/components/channel/PartiUser.vue";
 import CheckEntered from "@/components/channel/CheckEntered.vue";
 import MessageWindow from "@/components/channel/ChannelMessage.vue";
 import NavBar from "@/components/mypage/NavBar.vue";

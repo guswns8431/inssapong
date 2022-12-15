@@ -258,7 +258,7 @@ export class ChannelsRepository {
         await this.databaseService.runQuery(
           `
             SELECT user_id FROM "channel_member"
-            WHERE channel_id=$1;
+            WHERE channel_id=$1 AND ban_status=false;
           `,
           [channel_id],
         );
@@ -358,7 +358,7 @@ export class ChannelsRepository {
         `
           SELECT user_id, ban_status
           FROM "channel_member"
-          WHERE user_id=$1 AND channel_id=$2;
+          WHERE user_id=$1 AND channel_id=$2 AND ban_status=false;
         `,
         [user_id, channel_id],
       );

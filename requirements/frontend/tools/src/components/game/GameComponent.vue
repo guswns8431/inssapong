@@ -14,7 +14,7 @@
 
 <script setup lang="ts">
 import { UserData } from "@/store/UserData";
-import { onBeforeUnmount, onMounted, onUnmounted, ref } from "vue";
+import { onBeforeUnmount, onMounted, onUnmounted, ref, inject } from "vue";
 import router from "@/router";
 
 const reverse_key_text = ref("on");
@@ -25,6 +25,9 @@ const score_text = ref();
 const is_gaveup = ref(false);
 const is_gaming = ref(false);
 const is_end = ref(false);
+const inject_setInviteGameUnavailable: () => void = inject(
+  "setInviteGameUnavailable"
+);
 
 main_text.value = "Waiting for Player...";
 play_text.value = "...";
@@ -32,6 +35,7 @@ score_text.value = "...";
 
 // 게임 시작
 UserData.socket.on("game/start", (s_p1_id: number, s_p2_id: number) => {
+  inject_setInviteGameUnavailable();
   main_text.value = "Pong!";
   play_text.value = s_p1_id + " vs " + s_p2_id;
   score_text.value = "0 : 0";

@@ -50,7 +50,9 @@
 import { UserData } from "@/store/UserData";
 import { onMounted, ref, inject } from "vue";
 import router from "@/router";
+import { useRoute } from "vue-router";
 
+const route = useRoute();
 const image = ref("");
 const old_image = ref("");
 const validation = ref("TRUE");
@@ -61,6 +63,9 @@ const MAX_IMG_SIZE = 1024 * 1024;
 const inject_setCheckLoginAvailable: () => void = inject(
   "setCheckLoginAvailable"
 );
+const game_invite_available = ref(false);
+
+game_invite_available.value = route.name != "signup";
 
 const onSubmit = (event: Event) => {
   event.preventDefault();

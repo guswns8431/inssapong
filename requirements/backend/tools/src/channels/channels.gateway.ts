@@ -59,7 +59,6 @@ export class ChannelsGateway {
   @SubscribeMessage('channel/send')
   sendMessage(client: Socket, data: string) {
     const req = JSON.parse(data);
-
     if (req.channel_id != undefined) {
       this.sendMessageToChannel(client, req);
     } else if (req.receiver_id != undefined) {
@@ -88,7 +87,7 @@ export class ChannelsGateway {
     message.forEach((element) => {
       const user = block_users.find((user) => user == element.sender_id);
       if (user == undefined) {
-        client.emit('channel/send', element.sender_id, element.content);
+        client.emit('channel/send', element.sender_id, element.content, channel_id);
       }
     });
   }
@@ -130,6 +129,7 @@ export class ChannelsGateway {
         'channel/send',
         'server',
         `음소거 중! 메세지를 보낼 수 없습니다.`,
+        req.channel_id,
       );
       return;
     }
@@ -240,7 +240,7 @@ export class ChannelsGateway {
       req.sender_id,
     );
     if (is_block == 400 && member.status == USER_STATUS.ONLINE) {
-      member.socket.emit('channel/send', req.sender_id, req.message);
+      member.socket.emit('channel/send', req.sender_id, req.message, req.channel_id);
     }
   }
 
@@ -307,7 +307,7 @@ export class ChannelsGateway {
       client.emit('DBError');
     } else {
       this.mainGateway.changedChannelList();
-      client.emit('channel/send', 'server', `변경 성공!`);
+      client.emit('channel/send', 'server', `변경 성공!`, req.channel_id);
     }
   }
 
@@ -355,6 +355,7 @@ export class ChannelsGateway {
         'channel/send',
         'server',
         `${admin_id}를 관리자로 등록 완료!`,
+        req.channel_id,
       );
     }
   }
@@ -394,7 +395,8 @@ export class ChannelsGateway {
     try {
       await this.channelsService.exitChannel(req.channel_id, kick_id);
       this.exitSocketEvent(kick_id, 'kick');
-      client.emit('channel/send', 'server', `${kick_id}를 kick 완료!`);
+      client.emit('channel/send', 'server', `${kick_id}를 kick 완료!`, req.channel_id);
+      this.mainGateway.changedChannelMember(req.channel_id);
     } catch {
       client.emit('DBError');
     }
@@ -437,7 +439,7 @@ export class ChannelsGateway {
       `${req.channel_id}`,
       MUTE_TIME,
     );
-    client.emit('channel/send', 'server', `${mute_id}를 음소거 시킴!`);
+    client.emit('channel/send', 'server', `${mute_id}를 음소거 시킴!`, req.channel_id);
   }
 
   async banChannel(client: Socket, req: any, ban_id: string) {
@@ -481,7 +483,8 @@ export class ChannelsGateway {
       client.emit('DBError');
     } else {
       this.exitSocketEvent(ban_id, 'ban');
-      client.emit('channel/send', 'server', `${ban_id}를 ban 함!`);
+      client.emit('channel/send', 'server', `${ban_id}를 ban 함!`, req.channel_id);
+      this.mainGateway.changedChannelMember(req.channel_id);
     }
   }
 

@@ -1,21 +1,38 @@
 <template>
   <CheckLogin v-if="checklogin_available == true"></CheckLogin>
   <CheckPreLogin v-if="checkpreLogin_available == true"></CheckPreLogin>
+  <GameInvite
+    v-if="socket_available == true && game_invite_available == true"
+  ></GameInvite>
   <CatchDBError v-if="socket_available == true"></CatchDBError>
-  <GameInvite v-if="socket_available == true"></GameInvite>
   <router-view v-if="router_available == true" :key="$route.fullPath" />
 </template>
 
 <script lang="ts" setup>
-import { onBeforeUnmount, onMounted, provide, ref } from "vue";
-import CheckLogin from "./components/CheckLogin.vue";
+import { onBeforeUnmount, onMounted, provide, ref, watchEffect } from "vue";
+import CheckLogin from "@/components/CheckLogin.vue";
 import CatchDBError from "@/components/CatchDBError.vue";
-import GameInvite from "./components/game/GameInvite.vue";
-import CheckPreLogin from "./components/CheckPreLogin.vue";
+import CheckPreLogin from "@/components/CheckPreLogin.vue";
 import { UserData } from "./store/UserData";
-import { useRouter, onBeforeRouteUpdate } from "vue-router";
+import router from "@/router";
+import { useRoute } from "vue-router";
+import GameInvite from "@/components/game/GameInvite.vue";
 
-const router = useRouter();
+const route = useRoute();
+const game_invite_available = ref(false);
+
+watchEffect(() => {
+  if (
+    route.name == "signup" ||
+    route.name == "twofactor" ||
+    route.name == "/"
+  ) {
+    game_invite_available.value = false;
+  } else {
+    game_invite_available.value = true;
+  }
+});
+
 const router_available = ref(false);
 const checklogin_available = ref(false);
 const checkpreLogin_available = ref(false);
@@ -61,9 +78,14 @@ function init() {
     window.location.pathname == "/signup";
   socket_available.value = false;
   router_available.value = !checklogin_available.value;
-  console.log("good!");
+  router.go(0);
 }
 provide("init", init);
+
+function setInviteGameUnavailable() {
+  game_invite_available.value = false;
+}
+provide("setInviteGameUnavailable", setInviteGameUnavailable);
 
 async function exitGame() {
   if (socket_available.value == true)

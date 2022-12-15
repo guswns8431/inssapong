@@ -40,7 +40,6 @@ async function loginCheck() {
     return true;
   } catch (err) {
     cookies.keys().forEach((cookie) => cookies.remove(cookie));
-    alert("login 먼저 해주세요!");
     router.push({ name: "start" });
     return false;
   }

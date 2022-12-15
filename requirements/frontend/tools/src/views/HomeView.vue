@@ -28,7 +28,6 @@ function goGameView() {
 }
 
 onBeforeRouteUpdate(async () => {
-  console.log("hihihihi");
   inject_init();
 });
 </script>

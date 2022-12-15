@@ -1,17 +1,44 @@
-import { UserData } from "@/store/UserData";
 import { createRouter, createWebHistory, RouteRecordRaw } from "vue-router";
 import StartView from "../views/StartView.vue";
+import axios, { AxiosRequestConfig } from "axios";
 
+function getCookie(name: string) {
+  const value = `; ${document.cookie}`;
+  const parts = value.split(`; ${name}=`);
+  if (parts.length === 2) return parts.pop().split(";").shift();
+}
+
+// 쿠키를 헤더 추가
 // 서버에 get 요청을 보내 토큰이 유효한가 확인
 async function loginCheck() {
+  const token = getCookie("Authorization");
+
+  const instance = axios.create({
+    baseURL: "http://localhost:3000",
+  });
+  if (instance == undefined || token == undefined || token == "") {
+    await router.push({ name: "start" });
+    router.go(0);
+    return false;
+  }
+
+  instance.interceptors.request.use(
+    (config: AxiosRequestConfig<string>) => {
+      config.headers.Authorization = `Bearer ${token}`;
+      return config;
+    },
+    async () => {
+      await router.push({ name: "start" });
+      router.go(0);
+    }
+  );
+
   try {
-    const response = await UserData.instance.get("/loginCheck");
-    UserData.user_id = response.data;
+    await instance.get("/loginCheck");
     return true;
   } catch (err) {
-    console.log("check!");
-    alert("login 먼저 해주세요!!");
-    router.push({ name: "start" });
+    await router.push({ name: "start" });
+    router.go(0);
     return false;
   }
 }

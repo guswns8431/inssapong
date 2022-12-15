@@ -83,8 +83,8 @@ export class MainGateway {
     });
   }
 
-  changedChannelMember(user_id: string, channel_id: number) {
-    this.server.emit(`channel/changedChannelMember/${channel_id}`, user_id);
+  changedChannelMember(channel_id: number) {
+    this.server.emit(`channel/changedChannelMember/${channel_id}`);
   }
 
   changedChannelList() {
